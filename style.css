@@ -1,0 +1,222 @@
+body {
+        font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+        background: #fff; color: #333;
+        font-size: 14px; line-height: 1.4;
+        margin: 0; padding: 0;
+        height: 100vh; overflow: hidden;
+        -webkit-text-size-adjust: 100%;
+    }
+    
+    /* === 布局：左侧导航栏 + 右侧内容区 === */
+    .layout-container { display: flex; height: 100vh; width: 100vw; }
+    .nav-sidebar {
+        width: 250px; min-width: 120px; max-width: 500px;
+        background: #f4f6f8; border-right: none;
+        padding: 15px 10px; overflow-y: auto; flex-shrink: 0;
+        transition: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* === 导航栏宽度拖拽条 === */
+    .nav-resizer {
+        width: 6px;
+        background: #ddd;
+        cursor: col-resize;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 10;
+        transition: background 0.15s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        touch-action: none;
+    }
+    .nav-resizer::after {
+        content: '';
+        display: block;
+        width: 2px;
+        height: 40px;
+        background: #bbb;
+        border-radius: 2px;
+    }
+    .nav-resizer:hover, .nav-resizer.dragging {
+        background: #bcd;
+    }
+    .nav-resizer:hover::after, .nav-resizer.dragging::after {
+        background: #5588aa;
+    }
+    .nav-title {
+        font-size: 1.1em; font-weight: bold; color: #003366;
+        border-bottom: 2px solid #003366; padding-bottom: 5px; margin-bottom: 10px;
+    }
+    .nav-sidebar details > summary {
+        cursor: pointer; font-weight: bold; margin-top: 6px; outline: none; padding: 2px 0;
+    }
+    .nav-sidebar details > summary:hover { color: #0056b3; }
+    .nav-sidebar ul { list-style: none; padding-left: 15px; margin: 4px 0; }
+    .nav-sidebar li { margin-bottom: 4px; font-weight: normal; font-size: 0.95em; }
+    .nav-sidebar a { text-decoration: none; color: inherit; display: block; }
+    .nav-sidebar a:hover { text-decoration: underline; color: #0056b3; }
+    
+    .main-content {
+        flex: 1; overflow-y: auto; padding: 20px; scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    .content-inner { max-width: 1100px; margin: auto; }
+
+    .cover { text-align: center; padding: 50px 0; }
+    h1 { color: #003366; }
+    .day-head {
+        background: #003366; color: white;
+        padding: 8px 12px; margin-top: 15px; border-radius: 4px;
+        break-before: page;
+    }
+    .sc-head { border-bottom: 2px solid #003366; margin-top: 10px; padding-bottom: 4px; color: #003366; }
+    .phase-sep {
+        background: #333; color: white;
+        padding: 4px 10px; margin: 10px 0 5px 0;
+        font-weight: bold; border-left: 8px solid #f1c40f;
+        break-inside: avoid;
+    }
+    .box {
+        border: 1px solid #ddd; padding: 8px 10px;
+        margin-bottom: 6px; border-radius: 4px;
+        background: white; break-inside: avoid;
+    }
+    .multiline-text { white-space: pre-wrap; word-wrap: break-word; }
+
+    /* 左右分栏：flex 布局，支持同步滚动和高度调整 */
+    .phase-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        position: relative;
+        margin-bottom: 30px;
+        border: 1px solid #ddd;
+        background: white;
+        content-visibility: auto;
+        contain-intrinsic-size: auto 200px;
+    }
+    .col-left {
+        flex: 1;
+        padding-right: 8px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    .col-right {
+        width: 45%;
+        padding-left: 8px;
+        box-sizing: border-box;
+        border-left: 2px dashed #d0d0d0;
+        background: #fffcf5;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    /* 高度调整拖拽条（iPad 触控优化：44px 触控区） */
+    .phase-row-resizer {
+        position: absolute;
+        bottom: -22px;
+        left: 0;
+        right: 0;
+        height: 44px;
+        cursor: row-resize;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        touch-action: none;
+        z-index: 100;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .phase-row-resizer::before {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 5px;
+        background: #ccc;
+        border-radius: 3px;
+        transition: background 0.15s;
+    }
+    .phase-row-resizer:hover::before,
+    .phase-row-resizer:active::before {
+        background: #888;
+    }
+
+    .brief  { border-top: 4px solid #2c3e50; background: #f8f9fa; font-size: 0.9em; }
+    .brief-row   { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; padding: 3px 0; }
+    .brief-block { margin-top: 8px; padding-top: 5px; border-top: 1px solid #eee; }
+    .wx      { border-left: 5px solid #2196f3; background: #e3f2fd; font-family: Consolas, monospace; font-size: 0.9em; }
+    .atc     { border-left: 5px solid #4caf50; background: #e8f5e9; }
+    .fault   { border: 2px solid #ef5350; background: #ffebee; }
+    .event   { border: 2px dashed #8e24aa; background: #f3e5f5; }
+    .tem     { border: 1px solid #ffb300; background: #fff8e1; }
+    .sim     { border: 2px solid #0056b3; background: #eef6ff; padding: 10px; }
+    .sim h3  { margin-top: 0; border-bottom: 2px solid #ccc; padding-bottom: 4px; color: #004494; font-size: 1.1em; margin-bottom: 8px; }
+    .maneuver { border: 2px solid #009688; background: #e0f2f1; }
+    .table-row { display: flex; border-bottom: 1px dotted #ccc; padding: 2px 0; }
+    .table-lbl { font-weight: bold; width: 80px; color: #555; flex-shrink: 0; }
+    .table-val { flex: 1; }
+    .ob-tag { display: inline-block; background: #003366; color: white; padding: 1px 4px; border-radius: 4px; margin: 1px 2px 1px 0; font-size: 0.82em; }
+    img { max-width: 100%; border-radius: 4px; margin-top: 6px; display: block; }
+
+    /* 仪表盘 */
+    .dashboard-wrap { border: 2px solid #888; margin-bottom: 12px; background: #fff; break-inside: avoid; content-visibility: auto; contain-intrinsic-size: auto 300px; }
+    .dashboard-top  { display: table; width: 100%; border-collapse: collapse; }
+    .dash-box { display: table-cell; width: 20%; border: 1px solid #bbb; vertical-align: top; }
+    .dash-title { background: #e8e8e8; color: #222; font-weight: bold; text-align: center; padding: 3px 6px; border-bottom: 1px solid #bbb; font-size: 0.85em; text-transform: uppercase; }
+    .dash-content { padding: 4px 6px; font-size: 0.85em; }
+    .obj-tag-dash { display: inline-block; background: #0056b3; color: white; padding: 2px 5px; border-radius: 10px; margin: 1px; font-size: 0.85em; font-weight: bold; }
+    .risk-item { margin-bottom: 2px; padding-left: 12px; position: relative; }
+    .risk-item::before { content: "▲"; position: absolute; left: 0; font-size: 0.75em; color: #e65100; }
+    .wx-highlight { font-size: 1.1em; font-weight: bold; color: #d84315; text-align: center; margin: 2px 0; }
+
+    /* Event Timeline：真实 table 标签，8列等宽横排，每列竖向彩色标签 */
+    .timeline-wrap  { border-top: 2px solid #bbb; }
+    .timeline-title { background: #e8e8e8; color: #222; font-weight: bold; text-align: center; padding: 4px 8px; border-bottom: 1px solid #bbb; font-size: 0.88em; text-transform: uppercase; }
+    table.tl-table  { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.tl-table th { background: #334155; color: #f8fafc; font-size: 0.7em; font-weight: bold; text-align: center; padding: 4px 2px; border-right: 1px solid #475569; }
+    table.tl-table th:last-child { border-right: none; }
+    table.tl-table td { border-right: 1px solid #ddd; vertical-align: top; padding: 5px 4px; background: #f8fafc; min-width: 0; }
+    table.tl-table td:last-child { border-right: none; }
+    .tl-item  { display: block; font-size: 0.68em; font-weight: bold; line-height: 1.3; padding: 3px 4px; margin-bottom: 3px; border-radius: 3px; color: #fff; text-align: center; word-break: break-word; }
+    .tl-mal   { background: #c62828; }
+    .tl-event { background: #6a1b9a; }
+
+    @media print {
+        @page { margin: 1.2cm 1cm; orphans: 2; widows: 2; }
+        body  { height: auto; overflow: visible; font-size: 13px; }
+        .layout-container { display: block; height: auto; }
+        .nav-sidebar { display: none; } /* HTML打印时隐藏侧边栏 */
+        .nav-resizer { display: none; } /* 打印时隐藏拖拽条 */
+        .main-content { padding: 0; overflow: visible; height: auto; }
+        .content-inner { max-width: 100%; margin: 0; }
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        .cover    { break-after: page; }
+        .day-head { break-before: page; }
+        /* 优化分页：减少模块间的大段空白 */
+        .phase-row::after { content: ''; display: table; clear: both; }
+        .phase-row { align-items: flex-start !important; margin-bottom: 12px; min-height: auto !important; }
+        .phase-row-resizer { display: none !important; }
+        .col-left, .col-right { overflow: visible !important; height: auto !important; }
+        .col-right { background: #fffcf5 !important; }
+        .box { box-shadow: none; margin-bottom: 3px; break-inside: auto; }
+        .dashboard-wrap, .phase-sep, .sc-head { break-inside: avoid; }
+        /* 控制阶段分组内的元素不被随意分页 */
+        .brief, .sim, .wx, .atc, .tem, .maneuver {
+            break-inside: avoid;
+        }
+        .box { padding: 5px 8px; }
+        .box { margin-bottom: 4px; }
+    }
+
+    /* 顶部工具栏 */
+    .toolbar-wrap { position:fixed; top:10px; right:10px; z-index:1000; display:flex; gap:8px; }
+    .toolbar-btn { padding:8px 12px; color:white; border:none; border-radius:4px; cursor:pointer; font-size:14px; box-shadow:2px 2px 5px rgba(0,0,0,0.2); }
+    .toolbar-btn.green  { background:#4CAF50; }
+    .toolbar-btn.blue   { background:#2196F3; }
+    .toolbar-btn.orange { background:#FF9800; }
