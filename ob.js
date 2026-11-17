@@ -1,4 +1,110 @@
 // ========================
+// OB 评估数据自动持久化（防止 iPad 切换 App 或刷新丢失记录）
+// ========================
+function getOBStorageKey() {
+    const title = document.title || document.querySelector('h1')?.textContent || 'EBT_Manual';
+    return 'ebt_manual_state_' + title.trim();
+}
+
+function autoSaveOBState() {
+    try {
+        const state = { checkboxes: {}, textareas: {}, scrollTop: 0 };
+        document.querySelectorAll('.ob-checkbox').forEach(cb => {
+            if (cb.id && cb.checked) {
+                state.checkboxes[cb.id] = true;
+            }
+        });
+        document.querySelectorAll('textarea').forEach((ta, idx) => {
+            if (ta.value) {
+                const key = (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx;
+                state.textareas[key] = ta.value;
+            }
+        });
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            state.scrollTop = mainContent.scrollTop;
+        }
+        localStorage.setItem(getOBStorageKey(), JSON.stringify(state));
+    } catch (e) {}
+}
+
+function restoreOBState() {
+    try {
+        const raw = localStorage.getItem(getOBStorageKey());
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (state.checkboxes) {
+            document.querySelectorAll('.ob-checkbox').forEach(cb => {
+                if (cb.id && state.checkboxes[cb.id]) {
+                    cb.checked = true;
+                }
+            });
+        }
+        if (state.textareas) {
+            document.querySelectorAll('textarea').forEach((ta, idx) => {
+                const key = (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx;
+                if (state.textareas[key] !== undefined) {
+                    ta.value = state.textareas[key];
+                }
+            });
+        }
+        if (state.scrollTop) {
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                setTimeout(() => { mainContent.scrollTop = state.scrollTop; }, 150);
+            }
+        }
+    } catch (e) {}
+}
+
+function clearOBAssessment() {
+    if (!confirm('确定清空当前手册中所有已勾选的赞/踩和填写的评语记录吗？')) return;
+    document.querySelectorAll('.ob-checkbox').forEach(cb => { cb.checked = false; });
+    document.querySelectorAll('textarea').forEach(ta => { ta.value = ''; });
+    try {
+        localStorage.removeItem(getOBStorageKey());
+    } catch (e) {}
+    alert('记录已清空！');
+}
+
+(function initOBPersistence() {
+    function bindEvents() {
+        restoreOBState();
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('ob-checkbox')) {
+                autoSaveOBState();
+            }
+        });
+        document.addEventListener('input', (e) => {
+            if (e.target && e.target.tagName === 'TEXTAREA') {
+                autoSaveOBState();
+            }
+        });
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            let scrollTimer = null;
+            mainContent.addEventListener('scroll', () => {
+                if (scrollTimer) clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(autoSaveOBState, 400);
+            }, { passive: true });
+        }
+        // 页面隐藏或切后台时立即保存一次
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                autoSaveOBState();
+            }
+        });
+        window.addEventListener('pagehide', autoSaveOBState);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindEvents);
+    } else {
+        bindEvents();
+    }
+})();
+
+// ========================
 // OB 评估数据保存与导出功能
 // ========================
 function collectOBAssessment() {

@@ -6,7 +6,6 @@ function recalculatePhaseRowHeights(phaseRow) {
     const colRight = phaseRow.querySelector('.col-right');
     
     if (!colLeft) {
-        console.log('[高度计算] 错误：找不到 col-left');
         return;
     }
     
@@ -19,7 +18,6 @@ function recalculatePhaseRowHeights(phaseRow) {
     
     // 如果没有分栏，则由内容决定高度（auto），无需额外处理
     if (!colRight) {
-        console.log('[阶段 ' + (phaseRow.dataset.phaseIdx || '?') + '] 无分栏，高度由内容决定');
         return;
     }
     
@@ -38,12 +36,6 @@ function recalculatePhaseRowHeights(phaseRow) {
     // 方案：使用 setProperty 设置 !important，绕过 CSS 规则
     colLeft.style.setProperty('height', minHeight + 'px', 'important');
     colRight.style.setProperty('height', minHeight + 'px', 'important');
-    
-    // 详细调试输出
-    const phaseIdx = phaseRow.dataset.phaseIdx || '?';
-    const msg = '[阶段 ' + phaseIdx + '] L=' + leftHeight + 'px, R=' + 
-                rightHeight + 'px, MIN=' + minHeight + 'px, 已应用于 col-left 和 col-right';
-    console.log(msg);
 }
 
 // ========================
@@ -98,6 +90,7 @@ function recalculatePhaseRowHeights(phaseRow) {
             if (!resizer.hasPointerCapture(e.pointerId)) return;
             const delta = e.clientY - startY;
             const newHeight = Math.max(100, startHeight + delta);
+            row.dataset.manualHeight = 'true';
             row.style.minHeight = newHeight + 'px';
             const colLeft = row.querySelector('.col-left');
             const colRight = row.querySelector('.col-right');
@@ -123,12 +116,16 @@ function recalculatePhaseRowHeights(phaseRow) {
 // 初始化：计算所有分栏的自适应高度（读写分离，消除 Layout Thrashing）
 // ========================
 (function() {
+    let lastWindowWidth = window.innerWidth;
+
     function initHeights() {
         const rows = document.querySelectorAll('.phase-row');
         if (!rows.length) return;
 
         // 步骤 1：集中读取 —— 此阶段绝不修改 DOM
         const measurements = Array.from(rows).map(row => {
+            // 保留教员已手动拖拽调整过的行高，避免重算覆盖
+            if (row.dataset.manualHeight === 'true') return null;
             const left = row.querySelector('.col-left');
             const right = row.querySelector('.col-right');
             if (!left || !right) return null;
@@ -166,6 +163,12 @@ function recalculatePhaseRowHeights(phaseRow) {
     // 图片全部加载后再算一次（图片会撑高内容）
     window.addEventListener('load', () => setTimeout(initHeights, 100));
 
-    // 窗口 resize 时重新计算
-    window.addEventListener('resize', initHeights);
+    // 仅在窗口宽度真正变化时重新计算（忽略 iPad 切换 App、软键盘弹出或地址栏伸缩导致的高度变化）
+    window.addEventListener('resize', () => {
+        const curW = window.innerWidth;
+        if (Math.abs(curW - lastWindowWidth) > 5) {
+            lastWindowWidth = curW;
+            initHeights();
+        }
+    });
 })();
