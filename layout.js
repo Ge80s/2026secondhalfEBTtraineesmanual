@@ -162,6 +162,7 @@ function recalculatePhaseRowHeights(phaseRow) {
 
     // 图片全部加载后再算一次（图片会撑高内容）
     window.addEventListener('load', () => setTimeout(initHeights, 100));
+    document.addEventListener('manual-layout-change', initHeights);
 
     // 仅在窗口宽度真正变化时重新计算（忽略 iPad 切换 App、软键盘弹出或地址栏伸缩导致的高度变化）
     window.addEventListener('resize', () => {

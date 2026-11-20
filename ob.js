@@ -6,6 +6,15 @@ function getOBStorageKey() {
     return 'ebt_manual_state_' + title.trim();
 }
 
+function forEachNotesTextarea(callback) {
+    document.querySelectorAll('textarea:not(.maneuver-notes)').forEach((ta, idx) => {
+        callback(ta, (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx);
+    });
+    document.querySelectorAll('textarea.maneuver-notes').forEach((ta, idx) => {
+        callback(ta, 'maneuver__' + (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx);
+    });
+}
+
 function autoSaveOBState() {
     try {
         const state = { checkboxes: {}, textareas: {}, scrollTop: 0 };
@@ -14,9 +23,8 @@ function autoSaveOBState() {
                 state.checkboxes[cb.id] = true;
             }
         });
-        document.querySelectorAll('textarea').forEach((ta, idx) => {
+        forEachNotesTextarea((ta, key) => {
             if (ta.value) {
-                const key = (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx;
                 state.textareas[key] = ta.value;
             }
         });
@@ -41,8 +49,7 @@ function restoreOBState() {
             });
         }
         if (state.textareas) {
-            document.querySelectorAll('textarea').forEach((ta, idx) => {
-                const key = (ta.dataset.phase || '') + '__' + (ta.dataset.moduleName || '') + '__' + idx;
+            forEachNotesTextarea((ta, key) => {
                 if (state.textareas[key] !== undefined) {
                     ta.value = state.textareas[key];
                 }
