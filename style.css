@@ -215,6 +215,11 @@ body {
     .step-num-badge { background: #f59e0b; color: #000; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 999px; }
     .step-empty-badge { opacity: 0.6; font-size: 11px; }
     .step-arrow { color: #94a3b8; font-size: 12px; }
+    .phase-flow-wrap { margin: 0 0 14px; padding: 12px; background: #fff; border: 1px solid #d6e2ef; border-radius: 8px; overflow: hidden; }
+    .phase-flow-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 12px; margin-bottom: 8px; color: #0b3b69; }
+    .phase-flow-heading strong { font-size: 13px; }
+    .phase-flow-heading span { color: #64748b; font-size: 11px; }
+    .phase-flow-svg { display: block; width: 100%; height: auto; overflow: hidden; }
     .phase-cards-container { display: flex; flex-direction: column; gap: 14px; }
     .compliance-phase-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
     .phase-head { display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 8px 14px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: bold; color: #0f172a; }
@@ -287,6 +292,7 @@ body {
         .col-right { background: #fffcf5 !important; }
         .box { box-shadow: none; margin-bottom: 3px; break-inside: auto; }
         .dashboard-wrap, .phase-sep, .sc-head { break-inside: avoid; }
+        .phase-flow-wrap { break-inside: avoid; }
         .compliance-matrix-wrap:not([open]) > :not(.matrix-section-header) { display: block !important; }
         /* 控制阶段分组内的元素不被随意分页 */
         .brief, .sim, .wx, .atc, .tem, .maneuver {
